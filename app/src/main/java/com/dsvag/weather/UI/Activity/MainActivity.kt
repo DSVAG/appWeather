@@ -71,15 +71,6 @@ class MainActivity : AppCompatActivity() {
 
         apiCall(hourlyForecastDataSource)
 
-
-        /*binding.swipeRefreshLayout.setOnRefreshListener {
-            Log.d(TAG, "Activity refreshed")
-
-            getLastLocation()
-            apiCall(hourlyForecastDataSource)
-
-            binding.swipeRefreshLayout.isRefreshing = false
-        }*/
     }
 
     public override fun onStart() {
