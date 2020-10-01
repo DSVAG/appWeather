@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun apiCall(hourlyForecastDataSource: HourlyForecastDataSourceImpl) {
         Log.d(TAG, "Try get location")
-        GlobalScope.launch(Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.IO) {
             val lat = sharedPreferences.getFloat("Lat", 91.0F).toDouble()
             val lon = sharedPreferences.getFloat("Lon", 181.0F).toDouble()
 

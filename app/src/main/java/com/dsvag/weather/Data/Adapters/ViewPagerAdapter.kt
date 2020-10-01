@@ -9,6 +9,7 @@ import com.dsvag.weather.UI.Fragments.TomorrowFragment
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity) :
     FragmentStateAdapter(fragmentActivity) {
+
     override fun getItemCount() = 3
 
     override fun createFragment(position: Int): Fragment {
