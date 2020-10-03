@@ -1,15 +1,15 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/LightPurple</item>
-        <item name="colorPrimaryDark">@color/MiddlePurple</item>
-        <item name="colorAccent">@color/White</item>
-        <item name="android:navigationBarColor">@color/White</item>
+        <item name="colorPrimary">@color/lightPurple</item>
+        <item name="colorPrimaryDark">@color/middlePurple</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:navigationBarColor">@color/white</item>
     </style>
 
     <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:background">@color/White</item>
-        <item name="android:textColor">@color/DarkGrey</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/darkGrey</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

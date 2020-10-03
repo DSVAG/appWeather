@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/LightPurple"
+    android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".UI.Fragments.TodayFragment">
+    tools:context=".ui.fragments.TodayFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -20,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="@color/LightPurple"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <include layout="@layout/superficially_layout" />

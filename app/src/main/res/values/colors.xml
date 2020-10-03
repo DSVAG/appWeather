@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="LightPurple">#C483CF</color>
-    <color name="MiddlePurple">#AB47BC</color>
-    <color name="DarkPurple">#8E24AA</color>
-    <color name="Blue">#0000FF</color>
-    <color name="Aqua">#43D8C9</color>
-    <color name="White">#FFFFFF</color>
-    <color name="LightGrey">#C6C5C5</color>
-    <color name="MiddleGrey">#959494</color>
-    <color name="DarkGrey">#3E3E3E</color>
-    <color name="Black">#100303</color>
+    <color name="lightPurple">#C483CF</color>
+    <color name="middlePurple">#AB47BC</color>
+    <color name="darkPurple">#8E24AA</color>
+    <color name="blue">#0000FF</color>
+    <color name="aqua">#43D8C9</color>
+    <color name="white">#FFFFFF</color>
+    <color name="lightGrey">#C6C5C5</color>
+    <color name="middleGrey">#959494</color>
+    <color name="darkGrey">#3E3E3E</color>
+    <color name="black">#100303</color>
+    <color name="transparent">#00000000</color>
 </resources>
