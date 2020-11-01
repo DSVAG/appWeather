@@ -4,11 +4,14 @@
     <color name="middlePurple">#AB47BC</color>
     <color name="darkPurple">#8E24AA</color>
     <color name="blue">#0000FF</color>
+    <color name="blueLight">#0091EA</color>
     <color name="aqua">#43D8C9</color>
     <color name="white">#FFFFFF</color>
     <color name="lightGrey">#C6C5C5</color>
     <color name="middleGrey">#959494</color>
     <color name="darkGrey">#3E3E3E</color>
-    <color name="black">#100303</color>
+    <color name="black">#000000</color>
+
     <color name="transparent">#00000000</color>
+    <color name="transparentCustom">#20000000</color>
 </resources>

@@ -3,18 +3,21 @@ package com.dsvag.weather.data.adapters
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.dsvag.weather.ui.fragments.ForecastFragment
+import com.dsvag.weather.ui.fragments.TodayFragment
+import com.dsvag.weather.ui.fragments.TomorrowFragment
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity) :
     FragmentStateAdapter(fragmentActivity) {
 
-    private var fragmentList: MutableList<Fragment> = ArrayList()
-
-    override fun createFragment(position: Int): Fragment = fragmentList[position]
-
-    override fun getItemCount() = fragmentList.size
-
-    fun setData(fragments: List<Fragment>) {
-        fragmentList.clear()
-        fragmentList.addAll(fragments)
+    override fun createFragment(position: Int): Fragment {
+        return when (position) {
+            0 -> TodayFragment()
+            1 -> TomorrowFragment()
+            2 -> ForecastFragment()
+            else -> error("unknown position $position")
+        }
     }
+
+    override fun getItemCount() = 3
 }

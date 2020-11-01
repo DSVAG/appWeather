@@ -1,4 +1,4 @@
-package com.dsvag.weather.data.utils
+package com.dsvag.weather.data.di
 
 import android.app.Application
 import android.content.Context

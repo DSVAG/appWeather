@@ -1,18 +1,17 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/lightPurple</item>
         <item name="colorPrimaryDark">@color/middlePurple</item>
-        <item name="colorAccent">@color/white</item>
+        <item name="colorAccent">@color/middleGrey</item>
         <item name="android:navigationBarColor">@color/white</item>
     </style>
 
-    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="AlertDialogStyle" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="android:background">@color/white</item>
         <item name="android:textColor">@color/darkGrey</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 
 </resources>

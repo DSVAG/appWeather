@@ -1,5 +1,31 @@
 <resources>
     <string name="app_name">Weather</string>
 
-    <string name="enable_location">Your GPS seems to be disabled, need to enable it</string>
+    <string name="search_place">Search place</string>
+
+    <string name="celsius">°C</string>
+    <string name="mps">m/s</string>
+    <string name="degree">°</string>
+
+    <string name="current_details">Current details</string>
+    <string name="humidity">Humidity</string>
+    <string name="dev_point">Dev point</string>
+    <string name="pressure">Pressure</string>
+    <string name="uv_index">UV index</string>
+    <string name="cloudiness">Cloudiness</string>
+    <string name="visibility">Visibility</string>
+
+    <string name="precipitation">Precipitation</string>
+    <string name="pop">Probability of precipitation</string>
+    <string name="total_daily_volume">Total daily volume</string>
+
+    <string name="wind">Wind</string>
+
+    <string name="sunrise_sunset"><![CDATA[Sunrise & Sunset]]></string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="solar_day">Solar day</string>
+
+    <string name="link">openweathermap.org</string>
+    <string name="chance_of_rain">Chance of rain</string>
 </resources>

@@ -1,27 +1,30 @@
 package com.dsvag.weather.ui.activity
 
 import android.Manifest
-import android.content.Intent
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.IntentSender
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
-import android.provider.Settings
-import androidx.appcompat.app.AlertDialog
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.dsvag.weather.R
+import androidx.core.app.ActivityCompat
 import com.dsvag.weather.data.adapters.ViewPagerAdapter
-import com.dsvag.weather.data.network.ForecastDataSourceImpl
-import com.dsvag.weather.data.utils.getAppComponent
+import com.dsvag.weather.data.di.getAppComponent
 import com.dsvag.weather.databinding.ActivityMainBinding
-import com.dsvag.weather.ui.fragments.ForecastFragment
-import com.dsvag.weather.ui.fragments.TodayFragment
-import com.dsvag.weather.ui.fragments.TomorrowFragment
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import pub.devrel.easypermissions.AfterPermissionGranted
-import pub.devrel.easypermissions.EasyPermissions
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,14 +35,14 @@ class MainActivity : AppCompatActivity() {
 
     private val fusedLocationClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
 
-    private val apiService by lazy { getAppComponent().apiService }
+    private val repository by lazy { getAppComponent().repository }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(binding.root)
 
-        viewPagerAdapter.setData(listOf(TodayFragment(), TomorrowFragment(), ForecastFragment()))
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         binding.viewPager.adapter = viewPagerAdapter
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -50,58 +53,113 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
 
-        val hourlyForecastDataSource = ForecastDataSourceImpl(apiService)
-
-        apiCall(hourlyForecastDataSource)
-
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            apiCall(hourlyForecastDataSource)
-
-            binding.swipeRefreshLayout.isRefreshing = false
-        }
+        getLocation()
+        apiCall()
     }
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
 
-    @AfterPermissionGranted(locationRequestCode)
-    private fun secondRequestPermission() {
-        if (!EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-            EasyPermissions.requestPermissions(
-                this, "", locationRequestCode, Manifest.permission.ACCESS_FINE_LOCATION
-            )
+        if (requestCode == locationRequestCode && grantResults.isNotEmpty()) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLocation()
+            } else {
+                requestPermissions()
+            }
         }
     }
 
-    private fun apiCall(forecastDataSource: ForecastDataSourceImpl) {
-        GlobalScope.launch(Dispatchers.IO) {
-            //forecastDataSource.fetchHourlyForecast()
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(this, appPermissions, locationRequestCode)
+    }
+
+    private fun checkGps(): Boolean {
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun getLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d(TAG, "Permission deny")
+            requestPermissions()
+            return
+        }
+        if (checkGps()) {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    if (location != null) {
+                        repository.saveLocation(location.latitude, location.longitude)
+                    } else {
+                        Log.e(TAG, "Location null")
+                    }
+                }
+//                .addOnCompleteListener { task: Task<Location> ->
+//                    if (task.result != null) {
+//                        GlobalScope.launch(Dispatchers.IO) {
+//                            repository.saveLocation(task.result.latitude, task.result.longitude)
+//                        }
+//                        //repository.saveLocation(task.result.latitude, task.result.longitude)
+//                    } else {
+//                        Log.e(TAG, "Task result null", task.exception)
+//                    }
+//                }
+        } else {
+            createLocationDialog()
         }
     }
 
-    private fun buildAlertMessageNoGps() {
-        val builder = AlertDialog.Builder(this, R.style.AlertDialogStyle)
+    private fun createLocationDialog() {
+        val locationRequest = LocationRequest.create()
 
-        builder.setMessage(getString(R.string.enable_location))
-            .setCancelable(false)
-            .setPositiveButton("Yes") { dialog, _ ->
-                Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).apply {
-                    dialog.cancel()
-                    startActivity(this)
+        val builder = LocationSettingsRequest.Builder().apply {
+            addLocationRequest(locationRequest)
+            setAlwaysShow(true)
+        }
+
+        val result =
+            LocationServices.getSettingsClient(this).checkLocationSettings(builder.build())
+
+        result.addOnCompleteListener { task ->
+            try {
+                task.getResult(ApiException::class.java)
+            } catch (exception: ApiException) {
+                when (exception.statusCode) {
+                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED ->
+                        try {
+                            val resolvable = exception as ResolvableApiException
+                            resolvable.startResolutionForResult(this, locationRequestCode)
+                        } catch (e: IntentSender.SendIntentException) {
+                            Log.e(TAG, "", e)
+                        } catch (e: ClassCastException) {
+                            Log.e(TAG, "", e)
+                        }
                 }
             }
-            .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
+        }
+    }
 
-        val alert: AlertDialog = builder.create()
-        alert.show()
+    private fun apiCall() {
+        val (lat, lon) = repository.getLocation()
+
+        GlobalScope.launch(Dispatchers.IO) {
+            repository.getForecast(lat, lon, "metric", "alerts")
+        }
     }
 
     companion object {
         private const val TAG = "MainActivity"
-        private const val locationRequestCode = 101
+        private const val locationRequestCode = 534
+        private val appPermissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
     }
 }

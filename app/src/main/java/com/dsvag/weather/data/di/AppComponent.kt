@@ -1,7 +1,11 @@
-package com.dsvag.weather.data.utils
+package com.dsvag.weather.data.di
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatActivity
+import androidx.room.Room
+import com.dsvag.weather.data.database.ForecastDatabase
 import com.dsvag.weather.data.network.ApiForecast
+import com.dsvag.weather.data.repositorys.Repository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -9,7 +13,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class AppComponent(application: Application) {
 
-    val apiService: ApiForecast by lazy { retrofit.create(ApiForecast::class.java) }
+    private val database by lazy {
+        Room.databaseBuilder(application, ForecastDatabase::class.java, "database-forecast").build()
+    }
+
+    private val forecastDao by lazy { database.forecastDao() }
+
+    private val apiForecast: ApiForecast by lazy { retrofit.create(ApiForecast::class.java) }
 
     private val retrofit: Retrofit by lazy {
         Retrofit
@@ -45,4 +55,12 @@ class AppComponent(application: Application) {
             chain.proceed(request)
         }
     }
+
+    private val preference by lazy {
+        application.getSharedPreferences("Data", AppCompatActivity.MODE_PRIVATE)
+    }
+
+    val repository by lazy { Repository(apiForecast, forecastDao, preference) }
+
+
 }
