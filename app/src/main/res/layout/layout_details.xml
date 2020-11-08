@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1dp"
+    android:background="@color/white"
+    android:padding="16dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/current_details"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.internal.BaselineLayout
+        android:id="@+id/baseline"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/humidityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/humidity"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/label"
+        app:layout_constraintTop_toBottomOf="@+id/label" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/baseline"
+        app:layout_constraintTop_toTopOf="@+id/humidityLabel"
+        tools:text="40%" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/dewPointLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/dev_point"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/humidityLabel"
+        app:layout_constraintTop_toBottomOf="@+id/humidityLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/devPoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/baseline"
+        app:layout_constraintTop_toTopOf="@+id/dewPointLabel"
+        tools:text="4°C" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/pressureLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/pressure"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/dewPointLabel"
+        app:layout_constraintTop_toBottomOf="@+id/dewPointLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/pressure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/baseline"
+        app:layout_constraintTop_toTopOf="@+id/pressureLabel"
+        tools:text="1022 hPa" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/uvIndexLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/uv_index"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/pressureLabel"
+        app:layout_constraintTop_toBottomOf="@+id/pressureLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/uvIndex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/baseline"
+        app:layout_constraintTop_toTopOf="@+id/uvIndexLabel"
+        tools:text="2.01" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/cloudinessLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/cloudiness"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/uvIndexLabel"
+        app:layout_constraintTop_toBottomOf="@+id/uvIndexLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/cloudiness"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/baseline"
+        app:layout_constraintTop_toTopOf="@+id/cloudinessLabel"
+        tools:text="100%" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/visibilityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/visibility"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/cloudinessLabel"
+        app:layout_constraintTop_toBottomOf="@+id/cloudinessLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/visibility"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/baseline"
+        app:layout_constraintTop_toTopOf="@+id/visibilityLabel"
+        tools:text="10000 m" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/sunRiseLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/sunrise"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/visibilityLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/sunRise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/baseline"
+        app:layout_constraintTop_toTopOf="@+id/sunRiseLabel"
+        tools:text="8:40" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/solarDayLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/solar_day"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sunRiseLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/solarDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/baseline"
+        app:layout_constraintTop_toTopOf="@+id/solarDayLabel"
+        tools:text="8 h" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/sunSetLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/sunset"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/solarDayLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/sunSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/middleGrey"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/baseline"
+        app:layout_constraintTop_toTopOf="@+id/sunSetLabel"
+        tools:text="8:40" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
