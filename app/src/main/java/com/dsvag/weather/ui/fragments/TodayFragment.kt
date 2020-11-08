@@ -173,6 +173,6 @@ class TodayFragment : Fragment() {
     }
 
     companion object {
-        const val TAG = "TodayFragment"
+        private val TAG = TodayFragment::class.simpleName
     }
 }

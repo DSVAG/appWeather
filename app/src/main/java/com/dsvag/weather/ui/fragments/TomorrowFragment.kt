@@ -58,7 +58,7 @@ class TomorrowFragment : Fragment() {
                 forecast = newForecast
                 setData()
             } else {
-                Log.e(TodayFragment.TAG, "Forecast null")
+                Log.e(TAG, "Forecast null")
             }
         }
     }
@@ -159,6 +159,6 @@ class TomorrowFragment : Fragment() {
     }
 
     companion object {
-        const val TAG = "TomorrowFragment"
+        private val TAG = TomorrowFragment::class.simpleName
     }
 }

@@ -19,9 +19,9 @@ class AppComponent(application: Application) {
 
     private val forecastDao by lazy { database.forecastDao() }
 
-    private val apiForecast: ApiForecast by lazy { retrofit.create(ApiForecast::class.java) }
+    private val apiForecast by lazy { retrofit.create(ApiForecast::class.java) }
 
-    private val retrofit: Retrofit by lazy {
+    private val retrofit by lazy {
         Retrofit
             .Builder()
             .client(okHttpClient)
@@ -30,7 +30,7 @@ class AppComponent(application: Application) {
             .build()
     }
 
-    private val okHttpClient: OkHttpClient by lazy {
+    private val okHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor(requestInterceptor)
             .build()
@@ -60,7 +60,11 @@ class AppComponent(application: Application) {
         application.getSharedPreferences("Data", AppCompatActivity.MODE_PRIVATE)
     }
 
-    val repository by lazy { ForecastRepository(apiForecast, forecastDao, preference) }
-
-
+    val repository by lazy {
+        ForecastRepository(
+            apiForecast,
+            forecastDao,
+            preference
+        )
+    }
 }

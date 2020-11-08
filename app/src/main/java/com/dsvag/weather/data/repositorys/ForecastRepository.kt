@@ -7,6 +7,9 @@ import androidx.lifecycle.asLiveData
 import com.dsvag.weather.data.database.ForecastDao
 import com.dsvag.weather.data.models.request.Forecast
 import com.dsvag.weather.data.network.ApiForecast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ForecastRepository(
     private val apiForecast: ApiForecast,
@@ -15,6 +18,25 @@ class ForecastRepository(
 ) {
 
     private val editor = preference.edit()
+
+    private val sharedPreferencesListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreference, key ->
+            when (key) {
+                "Data" -> {
+                    val (lat, lon) = getLocation()
+
+                    GlobalScope.launch(Dispatchers.IO) {
+                        getForecast(lat, lon, "metric", "alerts")
+                    }
+                }
+                else -> error("unknown key")
+            }
+        }
+
+    init {
+        preference.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
+        sharedPreferencesListener.onSharedPreferenceChanged(preference, "Data")
+    }
 
     fun getLocation(): List<Double> {
         val latitude = preference.getFloat(latitudeKey, 91F)

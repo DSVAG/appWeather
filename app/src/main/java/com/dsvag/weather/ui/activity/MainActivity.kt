@@ -22,9 +22,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,7 +51,21 @@ class MainActivity : AppCompatActivity() {
         }.attach()
 
         getLocation()
-        apiCall()
+
+//        val sharedPreferencesListener =
+//            SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+//                when (key) {
+//                    "Data" -> {
+//                        apiCall()
+//                    }
+//                    else -> error("unknown key")
+//                }
+//            }
+//        val pre = application.getSharedPreferences("Data", MODE_PRIVATE)
+//        pre.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
+//
+//
+//        sharedPreferencesListener.onSharedPreferenceChanged(pre, "Data")
     }
 
     override fun onRequestPermissionsResult(
@@ -88,7 +99,6 @@ class MainActivity : AppCompatActivity() {
                 this, Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Log.d(TAG, "Permission deny")
             requestPermissions()
             return
         }
@@ -146,16 +156,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun apiCall() {
-        val (lat, lon) = repository.getLocation()
-
-        GlobalScope.launch(Dispatchers.IO) {
-            repository.getForecast(lat, lon, "metric", "alerts")
-        }
-    }
+//    private fun apiCall() {
+//        val (lat, lon) = repository.getLocation()
+//
+//        GlobalScope.launch(Dispatchers.IO) {
+//            repository.getForecast(lat, lon, "metric", "alerts")
+//        }
+//    }
 
     companion object {
-        private const val TAG = "MainActivity"
+        private val TAG = MainActivity::class.simpleName
         private const val locationRequestCode = 534
         private val appPermissions = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,

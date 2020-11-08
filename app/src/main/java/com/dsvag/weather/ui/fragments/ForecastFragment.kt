@@ -68,6 +68,6 @@ class ForecastFragment : Fragment() {
     }
 
     companion object {
-        const val TAG = "ForecastFragment"
+        private val TAG = ForecastFragment::class.simpleName
     }
 }
