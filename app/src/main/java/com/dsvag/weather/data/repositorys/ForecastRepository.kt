@@ -8,7 +8,7 @@ import com.dsvag.weather.data.database.ForecastDao
 import com.dsvag.weather.data.models.request.Forecast
 import com.dsvag.weather.data.network.ApiForecast
 
-class Repository(
+class ForecastRepository(
     private val apiForecast: ApiForecast,
     private val forecastDao: ForecastDao,
     private val preference: SharedPreferences,
@@ -46,10 +46,9 @@ class Repository(
     }
 
     companion object {
-        private val TAG = Repository::class.simpleName
+        private val TAG = ForecastRepository::class.simpleName
 
         private const val latitudeKey = "Latitude"
         private const val longitudeKey = "Longitude"
-        private const val unitsKey = "Units"
     }
 }

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ForecastDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(forecast: Forecast)
+    suspend fun insert(forecast: Forecast)
 
     @Delete
     fun delete(forecast: Forecast)

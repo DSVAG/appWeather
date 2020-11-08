@@ -33,8 +33,8 @@ class TomorrowFragment : Fragment() {
         ).get(FragmentViewModel::class.java)
     }
 
-    private lateinit var forecastt: Forecast
-    private val daily: Daily get() = forecastt.daily[1]
+    private lateinit var forecast: Forecast
+    private val daily: Daily get() = forecast.daily[1]
 
     private val units by lazy {
         Units(getString(R.string.celsius), getString(R.string.mps), getString(R.string.degree))
@@ -55,7 +55,7 @@ class TomorrowFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.forecast.observe(viewLifecycleOwner) { newForecast: Forecast? ->
             if (newForecast != null) {
-                forecastt = newForecast
+                forecast = newForecast
                 setData()
             } else {
                 Log.e(TodayFragment.TAG, "Forecast null")
@@ -84,7 +84,7 @@ class TomorrowFragment : Fragment() {
         forecastAfter6()
 
         val currentTime =
-            convertEpochToOffsetDateTime(daily.dt, (forecastt.timezoneOffset / 3600))
+            convertEpochToOffsetDateTime(daily.dt, (forecast.timezoneOffset / 3600))
 
         binding.current.date.text = currentTime.format(dateFormat)
         binding.current.temp.visibility = View.GONE
@@ -116,10 +116,10 @@ class TomorrowFragment : Fragment() {
         binding.additional.detail.visibility.visibility = View.GONE
 
         val sunRise =
-            convertEpochToOffsetDateTime(daily.sunrise, forecastt.timezoneOffset / 3600)
+            convertEpochToOffsetDateTime(daily.sunrise, forecast.timezoneOffset / 3600)
 
         val sunSet =
-            convertEpochToOffsetDateTime(daily.sunset, forecastt.timezoneOffset / 3600)
+            convertEpochToOffsetDateTime(daily.sunset, forecast.timezoneOffset / 3600)
 
         binding.additional.detail.sunRise.text = sunRise.format(timeFormat)
         binding.additional.detail.sunSet.text = sunSet.format(timeFormat)
@@ -140,11 +140,11 @@ class TomorrowFragment : Fragment() {
 
     private fun forecastAfter6() {
         val currentTime =
-            convertEpochToOffsetDateTime(forecastt.current.dt, forecastt.timezoneOffset / 3600)
+            convertEpochToOffsetDateTime(forecast.current.dt, forecast.timezoneOffset / 3600)
 
         val hourly = mutableListOf<Hourly>()
 
-        forecastt.hourly.forEach { hour ->
+        forecast.hourly.forEach { hour ->
             val tmpTime = convertEpochToOffsetDateTime(hour.dt, 0)
 
             if ((currentTime.dayOfYear + 1 == tmpTime.dayOfYear) && (tmpTime.hour > 6)) {

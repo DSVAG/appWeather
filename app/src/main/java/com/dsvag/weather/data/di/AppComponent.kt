@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.dsvag.weather.data.database.ForecastDatabase
 import com.dsvag.weather.data.network.ApiForecast
-import com.dsvag.weather.data.repositorys.Repository
+import com.dsvag.weather.data.repositorys.ForecastRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -60,7 +60,7 @@ class AppComponent(application: Application) {
         application.getSharedPreferences("Data", AppCompatActivity.MODE_PRIVATE)
     }
 
-    val repository by lazy { Repository(apiForecast, forecastDao, preference) }
+    val repository by lazy { ForecastRepository(apiForecast, forecastDao, preference) }
 
 
 }
