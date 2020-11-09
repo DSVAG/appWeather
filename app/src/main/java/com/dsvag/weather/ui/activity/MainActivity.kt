@@ -6,14 +6,12 @@ import android.content.Context
 import android.content.IntentSender
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.dsvag.weather.data.adapters.ViewPagerAdapter
-import com.dsvag.weather.data.di.getAppComponent
 import com.dsvag.weather.databinding.ActivityMainBinding
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
@@ -22,9 +20,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,10 +27,6 @@ class MainActivity : AppCompatActivity() {
             by lazy(LazyThreadSafetyMode.NONE) { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewPagerAdapter by lazy { ViewPagerAdapter(this) }
-
-    private val fusedLocationClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
-
-    private val repository by lazy { getAppComponent().repository }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,8 +44,7 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
 
-        getLocation()
-        apiCall()
+        checkPermissions()
     }
 
     override fun onRequestPermissionsResult(
@@ -64,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == locationRequestCode && grantResults.isNotEmpty()) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLocation()
+                checkPermissions()
             } else {
                 requestPermissions()
             }
@@ -81,37 +71,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun getLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+    fun checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
         ) {
-            Log.d(TAG, "Permission deny")
             requestPermissions()
             return
         }
-        if (checkGps()) {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    if (location != null) {
-                        repository.saveLocation(location.latitude, location.longitude)
-                    } else {
-                        Log.e(TAG, "Location null")
-                    }
-                }
-//                .addOnCompleteListener { task: Task<Location> ->
-//                    if (task.result != null) {
-//                        GlobalScope.launch(Dispatchers.IO) {
-//                            repository.saveLocation(task.result.latitude, task.result.longitude)
-//                        }
-//                        //repository.saveLocation(task.result.latitude, task.result.longitude)
-//                    } else {
-//                        Log.e(TAG, "Task result null", task.exception)
-//                    }
-//                }
-        } else {
+        if (!checkGps()) {
             createLocationDialog()
         }
     }
@@ -146,16 +115,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun apiCall() {
-        val (lat, lon) = repository.getLocation()
-
-        GlobalScope.launch(Dispatchers.IO) {
-            repository.getForecast(lat, lon, "metric", "alerts")
-        }
-    }
-
     companion object {
-        private const val TAG = "MainActivity"
+        private val TAG = MainActivity::class.simpleName
         private const val locationRequestCode = 534
         private val appPermissions = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,

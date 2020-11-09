@@ -1,10 +1,13 @@
 package com.dsvag.weather.ui.fragments
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,12 +56,21 @@ class TomorrowFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (ActivityCompat.checkSelfPermission(
+                binding.root.context, Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                binding.root.context, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            viewModel.onLocationPermissionGranted()
+        }
+
         viewModel.forecast.observe(viewLifecycleOwner) { newForecast: Forecast? ->
             if (newForecast != null) {
                 forecast = newForecast
                 setData()
             } else {
-                Log.e(TodayFragment.TAG, "Forecast null")
+                Log.e(TAG, "Forecast null")
             }
         }
     }
@@ -92,10 +104,11 @@ class TomorrowFragment : Fragment() {
         binding.current.feelsLike.text =
             String.format("Fells like %.0f", daily.feelsLike.day).plus(units.degree)
         binding.current.condition.text = daily.weather[0].description
-        binding.current.minTemp.text =
-            String.format("min %.0f", daily.temp.min).plus(units.degree)
-        binding.current.maxTemp.text =
-            String.format("max %.0f", daily.temp.max).plus(units.degree)
+
+        binding.current.maxMinTemp.text = StringBuilder().apply {
+            append(String.format("min %.0f", daily.temp.min).plus(units.degree))
+            append(String.format("  max %.0f", daily.temp.max).plus(units.degree))
+        }
 
         val url = "https://openweathermap.org/img/wn/${daily.weather[0].icon}@2x.png"
         Glide.with(binding.root).load(url).centerInside().into(binding.current.icon)
@@ -159,6 +172,6 @@ class TomorrowFragment : Fragment() {
     }
 
     companion object {
-        const val TAG = "TomorrowFragment"
+        private val TAG = TomorrowFragment::class.simpleName
     }
 }
