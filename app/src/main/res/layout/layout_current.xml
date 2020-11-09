@@ -19,7 +19,7 @@
         tools:text="July 24, 8:20 AM" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/maxTemp"
+        android:id="@+id/maxMinTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="start"
@@ -30,18 +30,6 @@
         tools:text="max 20°" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/minTemp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:gravity="end"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/maxTemp"
-        app:layout_constraintTop_toTopOf="@+id/maxTemp"
-        tools:text="min 10°" />
-
-    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/temp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,7 +37,7 @@
         android:textColor="@color/white"
         android:textSize="128sp"
         app:layout_constraintStart_toStartOf="@+id/date"
-        app:layout_constraintTop_toBottomOf="@+id/date"
+        app:layout_constraintTop_toBottomOf="@+id/maxMinTemp"
         tools:text="18" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -58,9 +46,9 @@
         android:layout_height="wrap_content"
         android:gravity="start"
         android:textColor="@color/white"
-        android:textSize="64sp"
+        android:textSize="72sp"
         app:layout_constraintStart_toEndOf="@+id/temp"
-        app:layout_constraintTop_toBottomOf="@+id/minTemp"
+        app:layout_constraintTop_toTopOf="@+id/temp"
         tools:text="@string/celsius" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -70,8 +58,8 @@
         android:gravity="start"
         android:textColor="@color/white"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/temp"
-        app:layout_constraintTop_toBottomOf="@+id/temp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/condition"
         tools:text="Feels like 20°" />
 
     <androidx.appcompat.widget.AppCompatImageView

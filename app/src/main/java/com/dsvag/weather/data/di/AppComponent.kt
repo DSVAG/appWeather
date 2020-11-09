@@ -1,11 +1,12 @@
 package com.dsvag.weather.data.di
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.dsvag.weather.data.database.ForecastDatabase
 import com.dsvag.weather.data.network.ApiForecast
 import com.dsvag.weather.data.repositorys.ForecastRepository
+import com.dsvag.weather.data.repositorys.LocationRepository
+import com.google.android.gms.location.LocationServices
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -20,6 +21,10 @@ class AppComponent(application: Application) {
     private val forecastDao by lazy { database.forecastDao() }
 
     private val apiForecast by lazy { retrofit.create(ApiForecast::class.java) }
+
+    private val fusedLocationClient by lazy {
+        LocationServices.getFusedLocationProviderClient(application)
+    }
 
     private val retrofit by lazy {
         Retrofit
@@ -56,15 +61,16 @@ class AppComponent(application: Application) {
         }
     }
 
-    private val preference by lazy {
-        application.getSharedPreferences("Data", AppCompatActivity.MODE_PRIVATE)
-    }
-
-    val repository by lazy {
+    val forecastRepository by lazy {
         ForecastRepository(
             apiForecast,
             forecastDao,
-            preference
+        )
+    }
+
+    val locationRepository by lazy {
+        LocationRepository(
+            fusedLocationClient,
         )
     }
 }

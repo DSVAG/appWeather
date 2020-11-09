@@ -1,10 +1,13 @@
 package com.dsvag.weather.ui.fragments
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,6 +46,15 @@ class ForecastFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (ActivityCompat.checkSelfPermission(
+                binding.root.context, Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                binding.root.context, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            viewModel.onLocationPermissionGranted()
+        }
+
         viewModel.forecast.observe(viewLifecycleOwner) { newForecast: Forecast? ->
             if (newForecast != null) {
                 dailyAdapter.setData(
