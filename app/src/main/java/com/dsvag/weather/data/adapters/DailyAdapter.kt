@@ -13,7 +13,6 @@ import com.dsvag.weather.data.utils.degreesToDirection
 import com.dsvag.weather.data.utils.timeFormat
 import com.dsvag.weather.databinding.RowDailyBinding
 
-
 class DailyAdapter : RecyclerView.Adapter<DailyAdapter.DailyViewHolder>() {
 
     private val dailyList: MutableList<Daily> = ArrayList()
