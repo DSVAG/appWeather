@@ -3,8 +3,6 @@ package com.dsvag.weather.data.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.dsvag.weather.data.models.Units
 import com.dsvag.weather.data.models.request.Daily
 import com.dsvag.weather.data.utils.convertEpochToOffsetDateTime
@@ -15,7 +13,7 @@ import com.dsvag.weather.databinding.RowDailyBinding
 
 class DailyAdapter : RecyclerView.Adapter<DailyAdapter.DailyViewHolder>() {
 
-    private val dailyList: MutableList<Daily> = ArrayList()
+    private val dailyList: MutableList<Daily> = mutableList()
     private var timeZone: Int = 0
     private lateinit var units: Units
 

@@ -99,8 +99,8 @@ class TomorrowFragment : Fragment() {
             convertEpochToOffsetDateTime(daily.dt, (forecast.timezoneOffset / 3600))
 
         binding.current.date.text = currentTime.format(dateFormat)
-        binding.current.temp.visibility = View.GONE
-        binding.current.degree.visibility = View.GONE
+        binding.current.temp.visibility = View.INVISIBLE
+        binding.current.degree.visibility = View.INVISIBLE
         binding.current.feelsLike.text =
             String.format("Fells like %.0f", daily.feelsLike.day).plus(units.degree)
         binding.current.condition.text = daily.weather[0].description

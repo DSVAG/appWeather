@@ -1,4 +1,4 @@
-package com.dsvag.weather.ui.activity
+package com.dsvag.weather.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -23,8 +23,11 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
 
-    private val binding
-            by lazy(LazyThreadSafetyMode.NONE) { ActivityMainBinding.inflate(layoutInflater) }
+    private val binding by lazy(LazyThreadSafetyMode.NONE) {
+        ActivityMainBinding.inflate(
+            layoutInflater
+        )
+    }
 
     private val viewPagerAdapter by lazy { ViewPagerAdapter(this) }
 

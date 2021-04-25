@@ -37,7 +37,7 @@
         android:textColor="@color/white"
         android:textSize="128sp"
         app:layout_constraintStart_toStartOf="@+id/date"
-        app:layout_constraintTop_toBottomOf="@+id/maxMinTemp"
+        app:layout_constraintTop_toBottomOf="@+id/date"
         tools:text="18" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -48,7 +48,7 @@
         android:textColor="@color/white"
         android:textSize="72sp"
         app:layout_constraintStart_toEndOf="@+id/temp"
-        app:layout_constraintTop_toTopOf="@+id/temp"
+        app:layout_constraintTop_toBottomOf="@+id/maxMinTemp"
         tools:text="@string/celsius" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -58,8 +58,8 @@
         android:gravity="start"
         android:textColor="@color/white"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/condition"
+        app:layout_constraintStart_toStartOf="@+id/temp"
+        app:layout_constraintTop_toBottomOf="@+id/temp"
         tools:text="Feels like 20°" />
 
     <androidx.appcompat.widget.AppCompatImageView
