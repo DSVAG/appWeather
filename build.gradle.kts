@@ -6,10 +6,10 @@ buildscript {
     }
 
     dependencies {
-        classpath ("com.android.tools.build:gradle:4.1.3")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32")
-        classpath("com.google.dagger:hilt-android-gradle-plugin:2.31.2-alpha")
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5")
+        classpath("com.android.tools.build:gradle:7.1.0-alpha03")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.37")
+        classpath ("android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0")
     }
 }
 

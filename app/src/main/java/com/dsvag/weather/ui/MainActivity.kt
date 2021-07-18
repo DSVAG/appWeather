@@ -3,127 +3,137 @@ package com.dsvag.weather.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.IntentSender
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.location.LocationManager
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Bundle
-import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import com.dsvag.weather.data.adapters.ViewPagerAdapter
+import androidx.lifecycle.lifecycleScope
+import com.dsvag.weather.data.utils.fastLazy
 import com.dsvag.weather.databinding.ActivityMainBinding
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.LocationRequest
+import com.dsvag.weather.ui.adapters.ViewPagerAdapter
+import com.dsvag.weather.utils.showShortToast
+import com.dsvag.weather.utils.viewBinding
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val binding by lazy(LazyThreadSafetyMode.NONE) {
-        ActivityMainBinding.inflate(
-            layoutInflater
-        )
-    }
+    private val binding by viewBinding(ActivityMainBinding::inflate)
 
-    private val viewPagerAdapter by lazy { ViewPagerAdapter(this) }
+    private val viewModel by viewModels<MainViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+    private val viewPagerAdapter by fastLazy { ViewPagerAdapter(this) }
 
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
-        binding.viewPager.adapter = viewPagerAdapter
-
+    private val tabLayoutMediator by fastLazy {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {
                 0 -> tab.text = "Today"
                 1 -> tab.text = "Tomorrow"
                 2 -> tab.text = "7 Days"
             }
-        }.attach()
-
-        checkPermissions()
+        }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
+    private val fusedLocationProviderClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+
+        binding.viewPager.adapter = viewPagerAdapter
+        tabLayoutMediator.attach()
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.stateFlow.collect(::stateObserver)
+        }
+
+        checkPermissions()
+        registerNetworkCallback()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == locationRequestCode && grantResults.isNotEmpty()) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                checkPermissions()
+            viewModel.setPermissionsStatus(grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        }
+    }
+
+    private fun stateObserver(state: MainViewModel.State) {
+        with(state) {
+            if (permissionStatus && networkStatus) {
+                lastLocation()
             } else {
-                requestPermissions()
-            }
-        }
-    }
-
-    private fun requestPermissions() {
-        ActivityCompat.requestPermissions(this, appPermissions, locationRequestCode)
-    }
-
-    private fun checkGps(): Boolean {
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-    }
-
-    @SuppressLint("SetTextI18n")
-    fun checkPermissions() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions()
-            return
-        }
-        if (!checkGps()) {
-            createLocationDialog()
-        }
-    }
-
-    private fun createLocationDialog() {
-        val locationRequest = LocationRequest.create()
-
-        val builder = LocationSettingsRequest.Builder().apply {
-            addLocationRequest(locationRequest)
-            setAlwaysShow(true)
-        }
-
-        val result =
-            LocationServices.getSettingsClient(this).checkLocationSettings(builder.build())
-
-        result.addOnCompleteListener { task ->
-            try {
-                task.getResult(ApiException::class.java)
-            } catch (exception: ApiException) {
-                when (exception.statusCode) {
-                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED ->
-                        try {
-                            val resolvable = exception as ResolvableApiException
-                            resolvable.startResolutionForResult(this, locationRequestCode)
-                        } catch (e: IntentSender.SendIntentException) {
-                            Log.e(TAG, "", e)
-                        } catch (e: ClassCastException) {
-                            Log.e(TAG, "", e)
-                        }
+                if (!permissionStatus) {
+                    viewModel.setError(MainViewModel.ErrorType.Permissions)
+                    requestPermissions(appPermissions, locationRequestCode)
                 }
+
+                if (!networkStatus) {
+                    viewModel.setError(MainViewModel.ErrorType.Network)
+                }
+
             }
+
+            //Put in resources
+            when (errorType) {
+                MainViewModel.ErrorType.Network -> showShortToast("Turn on network and try again")
+                MainViewModel.ErrorType.Server -> showShortToast("Server not response")
+                MainViewModel.ErrorType.Location -> showShortToast("Can't find your location")
+                MainViewModel.ErrorType.Permissions -> {
+                    showShortToast("Grant permission")
+                    checkPermissions()
+                }
+                MainViewModel.ErrorType.Other -> showShortToast("Unknown error. Restart app")
+            }
+        }
+    }
+
+    private fun checkPermissions() {
+        viewModel.setPermissionsStatus(
+            appPermissions.all { permission ->
+                checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
+            }
+        )
+    }
+
+    private fun registerNetworkCallback() {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        connectivityManager.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+
+            override fun onLosing(network: Network, maxMsToLive: Int) {
+                viewModel.setNetworkStatus(false)
+            }
+
+            override fun onAvailable(network: Network) {
+                viewModel.setNetworkStatus(true)
+            }
+
+            override fun onLost(network: Network) {
+                viewModel.setNetworkStatus(false)
+            }
+
+            override fun onUnavailable() {
+                viewModel.setNetworkStatus(false)
+            }
+        })
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun lastLocation() {
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+            viewModel.fetchForecast(location)
         }
     }
 
     companion object {
-        private val TAG = MainActivity::class.simpleName
         private const val locationRequestCode = 534
-        private val appPermissions = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
+        private val appPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     }
 }
